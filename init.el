@@ -35,7 +35,7 @@
         user-mail-address "root@tareifz.me"
         inhibit-splash-screen 1
         initial-scratch-message nil
-        initial-major-mode 'emacs-lisp-mode
+        initial-major-mode 'lisp-mode
         bookmark-save-flag 1
         make-backup-files nil
         backup-inhibited t
