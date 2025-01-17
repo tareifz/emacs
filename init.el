@@ -26,16 +26,12 @@
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
   (add-to-list 'load-path "~/.emacs.d/lisp")
 
-  (load "ui")
-  (load "editing")
-  (load "completion")
-
   ;; General Emacs configs
   (setq user-full-name "Tareif Al-Zamil"
         user-mail-address "root@tareifz.me"
         inhibit-splash-screen 1
         initial-scratch-message nil
-        initial-major-mode 'lisp-mode
+        initial-major-mode 'fundamental-mode
         bookmark-save-flag 1
         make-backup-files nil
         backup-inhibited t
@@ -83,27 +79,6 @@
     (with-temp-buffer (write-file custom-file)))
   (load-file custom-file)
 
-  ;; Vertico configs??
-  ;; Do not allow the cursor in the minibuffer prompt
-  (setq minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
-  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-  ;; Vertico commands are hidden in normal buffers.
-  (setq read-extended-command-predicate
-        #'command-completion-default-include-p)
-
-  ;; Enable recursive minibuffers
-  (setq enable-recursive-minibuffers t)
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
-  ;; corfu
-  ;; (setq completion-cycle-threshold 3)
-  ;; Enable indentation+completion using the TAB key.
-  ;; `completion-at-point' is often bound to M-TAB.
-  (setq tab-always-indent 'complete)
-
   (when (daemonp)
     (add-hook 'after-make-frame-functions
               (lambda (frame)
@@ -139,6 +114,22 @@
     (comment-region (point-min)
                     (point-max)))
 
+  (defun tz/set-ui ()
+  "Set UI settings (fonts, hide bars, ...)."
+  (interactive)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (toggle-scroll-bar -1)
+  (set-frame-font "Fira Code Medium")
+  (set-face-attribute 'default nil :height 110))
+
+  (defun tz/load-only-theme ()
+    "Disable all themes and then load a single theme interactively."
+    (interactive)
+    (while custom-enabled-themes
+      (disable-theme (car custom-enabled-themes)))
+    (call-interactively 'load-theme))
+
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
                   (replace-regexp-in-string
@@ -151,27 +142,51 @@
 (use-package rust-mode)
 (use-package typescript-mode)
 (use-package crystal-mode)
+(use-package zig-mode)
 (use-package fish-mode)
 (use-package yaml-mode)
 (use-package toml-mode)
 (use-package clojure-mode)
-(use-package cider)
 (use-package eldoc
   :diminish eldoc-mode)
+
+(use-package diminish
+  :config
+  (diminish 'hi-lock-mode))
 
 (use-package switch-window
   :bind
   ("C-x o" . switch-window))
+
+(use-package ido-vertical-mode
+  :config
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (setq ido-vertical-show-count t)
+  (setq ido-use-faces t)
+  (set-face-attribute 'ido-vertical-first-match-face nil
+                      :background nil
+                      :foreground "orange")
+  (set-face-attribute 'ido-vertical-only-match-face nil
+                      :background nil
+                      :foreground nil)
+  (set-face-attribute 'ido-vertical-match-face nil
+                      :foreground nil)
+  (ido-mode 1)
+  (ido-vertical-mode 1))
+
+(use-package smex
+  :bind
+  ("M-x" . smex)
+  ("M-X" . smex-major-mode-commands)
+  ;; old M-x
+  ("C-c C-c M-x" . execute-extended-command))
 
 (use-package which-key
   :diminish which-key-mode
   :config
   (which-key-mode)
   (which-key-setup-side-window-right-bottom))
-
-(use-package flycheck
-  :diminish flycheck-mode
-  :hook (prog-mode . flycheck-mode))
 
 (use-package docker
   :ensure t
@@ -185,23 +200,61 @@
   :config
   (auto-package-update-maybe))
 
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+(use-package multiple-cursors
+  :bind
+  ("C->" . mc/mark-next-like-this)
+  ("C-<" . mc/mark-previous-like-this)
+  ("C-c C-<" . mc/mark-all-like-this))
+
+;; (use-package paredit
+;;   :hook
+;;   (emacs-lisp-mode . paredit-mode)
+;;   (lisp-mode . paredit-mode)
+;;   (scheme-mode . paredit-mode)
+;;   (clojure-mode . paredit-mode))
+
+;; (use-package aggressive-indent
+;;   :hook
+;;   (emacs-lisp-mode . aggressive-indent-mode)
+;;   (lisp-mode . aggressive-indent-mode)
+;;   (clojure-mode . aggressive-indent-mode)
+;;   (scheme-mode . aggressive-indent-mode)
+;;   (sly-mode . aggressive-indent-mode))
+
 (use-package restclient
   :config
   (add-to-list 'auto-mode-alist '("\\.restclient\\'" . restclient-mode)))
 
-(use-package sly
+(use-package diff-hl
   :config
-  (setq inferior-lisp-program "/opt/homebrew/bin/sbcl"))
-(use-package sly-asdf)
-(use-package sly-quicklisp)
-;; expand macros in file C-c M-e
-(use-package sly-macrostep)
+  (global-diff-hl-mode)
+  (diff-hl-flydiff-mode))
 
-;; Persist history over Emacs restarts. Vertico sorts by history position.
-(use-package savehist
-  :init
-  (savehist-mode)
+(use-package hl-todo
   :config
-  (add-to-list 'savehist-additional-variables 'corfu-history))
+  (global-hl-todo-mode))
+
+;; (use-package almost-mono-themes
+;;   :config
+;;   (load-theme 'almost-mono-cream t)
+;;   (set-face-attribute 'mode-line nil :box nil))
+(use-package ef-themes
+  :config
+  (load-theme 'ef-summer t)
+  ;; (load-theme 'ef-tritanopia-light t)
+  )
+
+(use-package all-the-icons)
+(use-package all-the-icons-completion
+  :after (marginalia all-the-icons)
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :init
+  (all-the-icons-completion-mode))
+
+;; https://github.com/minad/tempel   !important
+;; (use-package temple)
 
 ;;; init.el ends here
