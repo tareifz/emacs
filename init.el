@@ -40,6 +40,8 @@
 		(package-refresh-contents)
 		(package-install 'use-package)))
 
+(package-refresh-contents :async)
+
 (require 'use-package)
 (require 'bind-key)
 
@@ -192,6 +194,7 @@
 	:config
 	(advice-add 'align :around #'align-with-spaces))
 
+(use-package diminish)
 (use-package try)
 (use-package rust-mode)
 (use-package typescript-mode)
@@ -204,9 +207,19 @@
 (use-package eldoc
 	:diminish eldoc-mode)
 
-(use-package diminish
-	:config
-	(diminish 'hi-lock-mode))
+(defvar treesit-language-source-alist
+	'((odin "https://github.com/tree-sitter-grammars/tree-sitter-odin")))
+
+(use-package odin-ts-mode
+  :vc (:url "https://github.com/Sampie159/odin-ts-mode"
+						:branch "master")
+  :mode "\\.odin\\'")
+
+(use-package sly)
+(use-package sly-asdf)
+(use-package sly-quicklisp)
+;; expand macros in file C-c M-e
+(use-package sly-macrostep)
 
 (use-package rainbow-mode
 	:diminish rainbow-mode
@@ -226,6 +239,11 @@
 (use-package hl-todo
 	:config
 	(global-hl-todo-mode))
+
+;; hi-lock is used to highlight words in buffer
+;; its used by highlight-thing package I believe
+(use-package hi-lock
+	:diminish hi-lock-mode)
 
 (use-package highlight-thing
 	:diminish highlight-thing-mode
@@ -283,8 +301,8 @@
 
 (use-package multiple-cursors
 	:bind
-	("C->"     . mc/mark-next-like-this)
-	("C-<"     . mc/mark-previous-like-this)
+	("C->" . mc/mark-next-like-this)
+	("C-<" . mc/mark-previous-like-this)
 	("C-c C-<" . mc/mark-all-like-this))
 
 (use-package paredit
@@ -312,8 +330,7 @@
 	(drag-stuff-define-keys))
 
 (use-package restclient
-	:config
-	(add-to-list 'auto-mode-alist '("\\.restclient\\'" . restclient-mode)))
+	:mode ("\\.restclient\\'" . restclient-mode))
 
 (use-package almost-mono-themes
 	:disabled
