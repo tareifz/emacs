@@ -178,6 +178,30 @@
   :config
   (diminish 'hi-lock-mode))
 
+(use-package rainbow-mode
+  :diminish rainbow-mode
+  :hook (prog-mode . rainbow-mode)
+  :config
+  (setopt rainbow-x-colors nil))
+
+(use-package rainbow-delimiters
+  :requires rainbow-mode
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package diff-hl
+  :config
+  (global-diff-hl-mode)
+  (diff-hl-flydiff-mode))
+
+(use-package hl-todo
+  :config
+  (global-hl-todo-mode))
+
+(use-package highlight-thing
+  :diminish highlight-thing-mode
+  :hook
+  (prog-mode . highlight-thing-mode))
+
 (use-package switch-window
   :bind
   ("C-x o" . switch-window))
@@ -249,18 +273,16 @@
   (scheme-mode . aggressive-indent-mode)
   (sly-mode . aggressive-indent-mode))
 
+;; this package is used to move lines up and down
+;; and move words right and left
+(use-package drag-stuff
+  :config
+  (drag-stuff-global-mode 1)
+  (drag-stuff-define-keys))
+
 (use-package restclient
   :config
   (add-to-list 'auto-mode-alist '("\\.restclient\\'" . restclient-mode)))
-
-(use-package diff-hl
-  :config
-  (global-diff-hl-mode)
-  (diff-hl-flydiff-mode))
-
-(use-package hl-todo
-  :config
-  (global-hl-todo-mode))
 
 (use-package almost-mono-themes
   :disabled
