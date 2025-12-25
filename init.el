@@ -81,11 +81,6 @@
   (global-auto-revert-mode t)
   (global-display-line-numbers-mode t)
 
-  (setq whitespace-style '(face trailing tabs))
-  (custom-set-faces
-   '(whitespace-tab ((t (:background "red")))))
-  (global-whitespace-mode t)  ;; need adjustments
-
   (setq-default ring-bell-function 'ignore)
   (setq-default indent-tabs-mode t)
   (setq-default tab-width 2)
@@ -161,6 +156,14 @@
    (clojure-mode . tz/insert-file-template)
    (emacs-lisp-mode . tz/insert-file-template)
    (lisp-mode . tz/insert-file-template)))
+
+(use-package whitespace
+	:config
+	(setopt whitespace-style '(face trailing tabs))
+  (custom-set-faces
+   '(whitespace-tab ((t (:background "red")))))
+  (global-whitespace-mode t)  ;; need adjustments
+  )
 
 (use-package try)
 (use-package rust-mode)
