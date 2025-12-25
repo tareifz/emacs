@@ -9,3 +9,11 @@
 
 # Undo-tree save-files
 *.~undo-tree
+
+# exclude important files, igone all other
+*
+!init.el
+!.gitignore
+!LICENSE
+!templates
+!lisp

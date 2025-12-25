@@ -1,6 +1,30 @@
 ;;; package --- Summary
-
 ;;; Commentary:
+
+;; ████████╗░█████╗░██████╗░███████╗██╗███████╗███████╗
+;; ╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██║██╔════╝╚════██║
+;; ░░░██║░░░███████║██████╔╝█████╗░░██║█████╗░░░░███╔═╝
+;; ░░░██║░░░██╔══██║██╔══██╗██╔══╝░░██║██╔══╝░░██╔══╝░░
+;; ░░░██║░░░██║░░██║██║░░██║███████╗██║██║░░░░░███████╗
+;; ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝╚═╝░░░░░╚══════╝
+
+;; Copyright (C) 2025 Tareif Al-Zamil <root@tareifz.me>
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;; Created At: 2024-03-11
+
 ;;; Tareifz Emacs config
 
 (require 'package)
@@ -23,19 +47,21 @@
 
 (use-package emacs
   :config
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-  (add-to-list 'load-path "~/.emacs.d/lisp")
+  (add-to-list 'custom-theme-load-path
+               (concat user-emacs-directory "themes"))
+  (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 
   ;; General Emacs configs
-  (setq user-full-name "Tareif Al-Zamil"
-        user-mail-address "root@tareifz.me"
-        inhibit-splash-screen 1
-        initial-scratch-message nil
-        initial-major-mode 'fundamental-mode
-        bookmark-save-flag 1
-        make-backup-files nil
-        backup-inhibited t
-        auto-save-default nil)
+  (setq user-full-name "Tareif Al-Zamil")
+  (setq user-mail-address "root@tareifz.me")
+  (setq inhibit-splash-screen 1)
+  (setq initial-scratch-message nil)
+  (setq initial-major-mode 'fundamental-mode)
+  (setq bookmark-save-flag 1)
+  (setq make-backup-files nil)
+  (setq backup-inhibited t)
+  (setq auto-save-default nil)
+
   ;; Set UTF-8 encoding.
   (set-language-environment 'utf-8)
   (set-terminal-coding-system 'utf-8)
@@ -47,37 +73,40 @@
   (fset 'yes-or-no-p 'y-or-n-p)
   ;; use ibuffer
   (defalias 'list-buffers 'ibuffer)
-  ;;
-  (electric-pair-mode 1) ;; enable only for non-lisps
+
+  (electric-pair-mode t) ;; enable only for non-lisps
   (show-paren-mode t)
-  (delete-selection-mode 1)
-  (global-hl-line-mode 1)
-  (global-auto-revert-mode 1)
+  (delete-selection-mode t)
+  (global-hl-line-mode t)
+  (global-auto-revert-mode t)
   (global-display-line-numbers-mode t)
 
-  (setq-default linum-format " %d "
-                ring-bell-function 'ignore
-                indent-tabs-mode nil
-                highlight-tabs t
-                tab-width 2
-                default-tab-width 2
-                tab-always-indent nil
-                ;; Javescript indent level
-                js-indent-level 2
-                ;; Custom settings file
-                custom-file "~/.emacs.d/auto-generated-customized-settings.el")
-  ;; mac os remapping
-  (custom-set-variables
-   '(mac-option-modifier nil)
-   '(mac-command-modifier 'meta)
-   '(mac-right-option-modifier nil)
-   '(mac-right-command-modifier 'meta))
+  (setq whitespace-style '(face trailing tabs))
+  (custom-set-faces
+   '(whitespace-tab ((t (:background "red")))))
+  (global-whitespace-mode t)  ;; need adjustments
 
-  (add-hook 'prog-mode-hook (lambda () (setq show-trailing-whitespace t)))
+  (setq-default ring-bell-function 'ignore)
+  (setq-default indent-tabs-mode t)
+  (setq-default tab-width 2)
+  (setq-default default-tab-width 2)
+  (setq-default tab-always-indent nil)
+  (setq-default js-indent-level 2)
+
+  ;; MacOS remapping
+  (setopt mac-option-modifier nil)
+  (setopt mac-command-modifier 'meta)
+  (setopt mac-right-option-modifier nil)
+  (setopt mac-right-command-modifier 'meta)
+
+  (setq-default custom-file
+                (concat user-emacs-directory
+                        "auto-generated-customized-settings.el"))
 
   (unless (file-exists-p custom-file)
     (with-temp-buffer (write-file custom-file)))
   (load-file custom-file)
+
 
   (when (daemonp)
     (add-hook 'after-make-frame-functions
@@ -85,15 +114,20 @@
                 (select-frame frame)
                 (tz/set-ui))))
 
-  ;; Set the UI
-  (tz/set-ui)
-  :hook ((before-save . whitespace-cleanup)
-         (before-save . (lambda () (delete-trailing-whitespace)))
-         (crystal-mode . tz/insert-file-template)
-         (clojure-mode . tz/insert-file-template)
-         (emacs-lisp-mode . tz/insert-file-template)
-         (lisp-mode . tz/insert-file-template))
+	(tz/set-ui)
   :preface
+  (defun tz/load-only-theme ()
+    "Disable all themes and then load a single theme interactively."
+    (interactive)
+    (while custom-enabled-themes
+      (disable-theme (car custom-enabled-themes)))
+    (call-interactively 'load-theme))
+
+  (defun tz/comment-file ()
+    "Comment All the file lines."
+    (comment-region (point-min)
+                    (point-max)))
+
   (defun tz/insert-file-template ()
     "Insert template file into the current buffer when the buffer is empty."
     (when (and (= (point-max) (point-min))
@@ -109,34 +143,24 @@
         (replace-regexp-in-region "<%filename-without-extention%>" filename-without-extension)
         (tz/comment-file))))
 
-  (defun tz/comment-file ()
-    "Comment All the file lines."
-    (comment-region (point-min)
-                    (point-max)))
-
   (defun tz/set-ui ()
-  "Set UI settings (fonts, hide bars, ...)."
-  (interactive)
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (toggle-scroll-bar -1)
-  (set-frame-font "Fira Code Medium")
-  (set-face-attribute 'default nil :height 110))
-
-  (defun tz/load-only-theme ()
-    "Disable all themes and then load a single theme interactively."
+    "Set UI settings (fonts, hide bars, ...)."
     (interactive)
-    (while custom-enabled-themes
-      (disable-theme (car custom-enabled-themes)))
-    (call-interactively 'load-theme))
+    (menu-bar-mode -1)
+    (tool-bar-mode -1)
+    (toggle-scroll-bar -1)
+    (set-frame-font "Fira Code Medium")
+    (set-frame-font "Gitlab Mono")
+    (set-face-attribute 'default nil :height 150))
 
-  (defun crm-indicator (args)
-    (cons (format "[CRM%s] %s"
-                  (replace-regexp-in-string
-                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                   crm-separator)
-                  (car args))
-          (cdr args))))
+  :hook
+  ((before-save . whitespace-cleanup)
+   (before-save . (lambda () (delete-trailing-whitespace)))
+   (prog-mode . (lambda () (setq show-trailing-whitespace t)))
+   (crystal-mode . tz/insert-file-template)
+   (clojure-mode . tz/insert-file-template)
+   (emacs-lisp-mode . tz/insert-file-template)
+   (lisp-mode . tz/insert-file-template)))
 
 (use-package try)
 (use-package rust-mode)
@@ -209,20 +233,21 @@
   ("C-<" . mc/mark-previous-like-this)
   ("C-c C-<" . mc/mark-all-like-this))
 
-;; (use-package paredit
-;;   :hook
-;;   (emacs-lisp-mode . paredit-mode)
-;;   (lisp-mode . paredit-mode)
-;;   (scheme-mode . paredit-mode)
-;;   (clojure-mode . paredit-mode))
+(use-package paredit
+  :hook
+  (emacs-lisp-mode . paredit-mode)
+  (lisp-mode . paredit-mode)
+  (scheme-mode . paredit-mode)
+  (clojure-mode . paredit-mode))
 
-;; (use-package aggressive-indent
-;;   :hook
-;;   (emacs-lisp-mode . aggressive-indent-mode)
-;;   (lisp-mode . aggressive-indent-mode)
-;;   (clojure-mode . aggressive-indent-mode)
-;;   (scheme-mode . aggressive-indent-mode)
-;;   (sly-mode . aggressive-indent-mode))
+(use-package aggressive-indent
+  :disabled
+  :hook
+  (emacs-lisp-mode . aggressive-indent-mode)
+  (lisp-mode . aggressive-indent-mode)
+  (clojure-mode . aggressive-indent-mode)
+  (scheme-mode . aggressive-indent-mode)
+  (sly-mode . aggressive-indent-mode))
 
 (use-package restclient
   :config
@@ -237,24 +262,16 @@
   :config
   (global-hl-todo-mode))
 
-;; (use-package almost-mono-themes
-;;   :config
-;;   (load-theme 'almost-mono-cream t)
-;;   (set-face-attribute 'mode-line nil :box nil))
+(use-package almost-mono-themes
+  :disabled
+  :config
+  (load-theme 'almost-mono-cream t)
+  (set-face-attribute 'mode-line nil :box nil))
+
 (use-package ef-themes
   :config
   (load-theme 'ef-summer t)
   ;; (load-theme 'ef-tritanopia-light t)
   )
-
-(use-package all-the-icons)
-(use-package all-the-icons-completion
-  :after (marginalia all-the-icons)
-  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
-  :init
-  (all-the-icons-completion-mode))
-
-;; https://github.com/minad/tempel   !important
-;; (use-package temple)
 
 ;;; init.el ends here
