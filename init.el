@@ -164,15 +164,14 @@
 		(untabify (point-min) (point-max)))
 
 	:hook
-	((before-save . whitespace-cleanup)
-	 (before-save . (lambda () (delete-trailing-whitespace)))
-	 (before-save . tz/indent-buffer)
-	 (before-save . tz/tabify-buffer)
-	 (prog-mode . (lambda () (setq show-trailing-whitespace t)))
-	 (crystal-mode . tz/insert-file-template)
-	 (clojure-mode . tz/insert-file-template)
+	((before-save     . whitespace-cleanup)
+	 (before-save     . (lambda () (delete-trailing-whitespace)))
+	 (before-save     . tz/indent-buffer)
+	 (prog-mode       . (lambda () (setq show-trailing-whitespace t)))
+	 (crystal-mode    . tz/insert-file-template)
+	 (clojure-mode    . tz/insert-file-template)
 	 (emacs-lisp-mode . tz/insert-file-template)
-	 (lisp-mode . tz/insert-file-template)))
+	 (lisp-mode       . tz/insert-file-template)))
 
 (use-package whitespace
 	:diminish whitespace-mode
@@ -184,6 +183,8 @@
 	)
 
 (use-package align
+	:bind
+	("C-x a a" . align-entire)
 	:preface
 	(defun align-with-spaces (ogfn &rest args)
 		(let ((indent-tabs-mode nil))
@@ -254,8 +255,8 @@
 
 (use-package smex
 	:bind
-	("M-x" . smex)
-	("M-X" . smex-major-mode-commands)
+	("M-x"         . smex)
+	("M-X"         . smex-major-mode-commands)
 	;; old M-x
 	("C-c C-c M-x" . execute-extended-command))
 
@@ -282,25 +283,25 @@
 
 (use-package multiple-cursors
 	:bind
-	("C->" . mc/mark-next-like-this)
-	("C-<" . mc/mark-previous-like-this)
+	("C->"     . mc/mark-next-like-this)
+	("C-<"     . mc/mark-previous-like-this)
 	("C-c C-<" . mc/mark-all-like-this))
 
 (use-package paredit
 	:hook
 	(emacs-lisp-mode . paredit-mode)
-	(lisp-mode . paredit-mode)
-	(scheme-mode . paredit-mode)
-	(clojure-mode . paredit-mode))
+	(lisp-mode       . paredit-mode)
+	(scheme-mode     . paredit-mode)
+	(clojure-mode    . paredit-mode))
 
 (use-package aggressive-indent
 	:disabled
 	:hook
 	(emacs-lisp-mode . aggressive-indent-mode)
-	(lisp-mode . aggressive-indent-mode)
-	(clojure-mode . aggressive-indent-mode)
-	(scheme-mode . aggressive-indent-mode)
-	(sly-mode . aggressive-indent-mode))
+	(lisp-mode       . aggressive-indent-mode)
+	(clojure-mode    . aggressive-indent-mode)
+	(scheme-mode     . aggressive-indent-mode)
+	(sly-mode        . aggressive-indent-mode))
 
 ;; this package is used to move lines up and down
 ;; and move words right and left
