@@ -175,6 +175,7 @@
 	 (lisp-mode . tz/insert-file-template)))
 
 (use-package whitespace
+	:diminish whitespace-mode
 	:config
 	(setopt whitespace-style '(face trailing tabs))
 	(custom-set-faces
@@ -304,6 +305,7 @@
 ;; this package is used to move lines up and down
 ;; and move words right and left
 (use-package drag-stuff
+	:diminish drag-stuff-mode
 	:config
 	(drag-stuff-global-mode 1)
 	(drag-stuff-define-keys))
