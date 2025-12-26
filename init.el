@@ -34,7 +34,6 @@
 			'(("gnu" . "https://elpa.gnu.org/packages/")
 				("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
-
 (package-refresh-contents :async)
 
 (require 'use-package)
@@ -148,13 +147,10 @@
 (setopt mac-right-option-modifier nil)
 (setopt mac-right-command-modifier 'meta)
 
-(setq-default custom-file
-							(concat user-emacs-directory
-											"auto-generated-customized-settings.el"))
-
-(unless (file-exists-p custom-file)
-	(with-temp-buffer (write-file custom-file)))
-(load-file custom-file)
+(setopt custom-file
+				(concat user-emacs-directory
+								"auto-generated-customized-settings.el"))
+(load custom-file 'noerror)
 
 (when (daemonp)
 	(add-hook 'after-make-frame-functions
@@ -212,6 +208,13 @@
 	:defer t
 	:diminish eldoc-mode)
 
+;; Interactive macro expander
+(use-package macrostep
+  :bind (:map emacs-lisp-mode-map
+							("C-c e" . macrostep-expand)
+							:map lisp-interaction-mode-map
+							("C-c e" . macrostep-expand)))
+
 (defvar treesit-language-source-alist
 	'((odin "https://github.com/tree-sitter-grammars/tree-sitter-odin")))
 
@@ -227,6 +230,7 @@
 (use-package sly-quicklisp
 	:after sly)
 ;; expand macros in file C-c M-e
+;; NOTE(tz): maybe change it to match elisp?
 (use-package sly-macrostep
 	:after sly)
 
@@ -270,14 +274,9 @@
 	(setq ido-everywhere t)
 	(setq ido-vertical-show-count t)
 	(setq ido-use-faces t)
-	(set-face-attribute 'ido-vertical-first-match-face nil
-											:background nil
-											:foreground "orange")
-	(set-face-attribute 'ido-vertical-only-match-face nil
-											:background nil
-											:foreground nil)
-	(set-face-attribute 'ido-vertical-match-face nil
-											:foreground nil)
+	(set-face-attribute 'ido-vertical-first-match-face nil :foreground "orange")
+	(set-face-attribute 'ido-vertical-only-match-face nil)
+	(set-face-attribute 'ido-vertical-match-face nil)
 	(ido-mode 1)
 	(ido-vertical-mode 1))
 
