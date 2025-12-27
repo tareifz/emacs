@@ -84,6 +84,8 @@
 	(interactive)
 	(indent-region (point-min) (point-max)))
 
+;; check shell-command-on-region,
+;; expand, unexpand
 (defun tz/tabify-buffer ()
 	"Convert buffer spaces to tabs."
 	(interactive)
@@ -171,11 +173,12 @@
 
 (use-package whitespace
 	:diminish whitespace-mode
+	:hook (prog-mode . whitespace-mode)
 	:config
-	(setopt whitespace-style '(face trailing tabs))
+	(setopt whitespace-style '(face tab-mark tabs trailing)) ;; change to indentation
 	(custom-set-faces
-	 '(whitespace-tab ((t (:background "red")))))
-	(global-whitespace-mode t)	;; need adjustments
+	 '(whitespace-tab ((t (:foreground "red"))))
+	 '(whitespace-trailing ((t (:background "red")))))
 	)
 
 (use-package align
