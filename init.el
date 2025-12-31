@@ -177,7 +177,7 @@
 	:config
 	(setopt whitespace-style '(face tab-mark tabs trailing)) ;; change to indentation
 	(custom-set-faces
-	 '(whitespace-tab ((t (:foreground "red"))))
+	 '(whitespace-tab ((t (:foreground "#DB5B83"))))
 	 '(whitespace-trailing ((t (:background "red")))))
 	)
 
@@ -346,7 +346,9 @@
 (use-package almost-mono-themes
 	:config
 	(load-theme 'almost-mono-cream t)
-	(set-face-attribute 'mode-line nil :box nil))
+	;; NOTE(tz): to be refactored..
+	(set-face-attribute 'mode-line nil :box nil :background "#E6B983" :foreground "#000000")
+	(set-face-attribute 'font-lock-string-face nil :foreground "#6760A8"))
 
 (use-package ef-themes
 	:disabled
