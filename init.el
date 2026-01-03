@@ -31,8 +31,8 @@
 
 ;;; Code:
 (setq package-archives
-			'(("gnu" . "https://elpa.gnu.org/packages/")
-				("melpa" . "https://melpa.org/packages/")))
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 (package-refresh-contents :async)
 
@@ -43,67 +43,67 @@
 (setq use-package-always-ensure t)
 
 (defun tz/load-only-theme ()
-	"Disable all themes and then load a single theme interactively."
-	(interactive)
-	(while custom-enabled-themes
-		(disable-theme (car custom-enabled-themes)))
-	(call-interactively 'load-theme))
+  "Disable all themes and then load a single theme interactively."
+  (interactive)
+  (while custom-enabled-themes
+    (disable-theme (car custom-enabled-themes)))
+  (call-interactively 'load-theme))
 
 (defun tz/comment-file ()
-	"Comment All the file lines."
-	(comment-region (point-min)
-									(point-max)))
+  "Comment All the file lines."
+  (comment-region (point-min)
+                  (point-max)))
 
 (defun tz/insert-file-template ()
-	"Insert template file into the current buffer when the buffer is empty."
-	(when (and (= (point-max) (point-min))
-						 (not (string= (buffer-name) "*scratch*")))
-		(let* ((filename (buffer-name))
-					 (current-year (format-time-string "%Y"))
-					 (current-date (format-time-string "%Y-%m-%d"))
-					 (filename-without-extension (string-remove-suffix ".el" filename)))
-			(insert-file-contents (concat user-emacs-directory "templates/general-template.txt"))
-			(replace-regexp-in-region "<%filename%>" filename)
-			(replace-regexp-in-region "<%current-year%>" current-year)
-			(replace-regexp-in-region "<%current-date%>" current-date)
-			(replace-regexp-in-region "<%filename-without-extention%>" filename-without-extension)
-			(tz/comment-file))))
+  "Insert template file into the current buffer when the buffer is empty."
+  (when (and (= (point-max) (point-min))
+             (not (string= (buffer-name) "*scratch*")))
+    (let* ((filename (buffer-name))
+           (current-year (format-time-string "%Y"))
+           (current-date (format-time-string "%Y-%m-%d"))
+           (filename-without-extension (string-remove-suffix ".el" filename)))
+      (insert-file-contents (concat user-emacs-directory "templates/general-template.txt"))
+      (replace-regexp-in-region "<%filename%>" filename)
+      (replace-regexp-in-region "<%current-year%>" current-year)
+      (replace-regexp-in-region "<%current-date%>" current-date)
+      (replace-regexp-in-region "<%filename-without-extention%>" filename-without-extension)
+      (tz/comment-file))))
 
 (defun tz/set-ui ()
-	"Set UI settings (fonts, hide bars, ...)."
-	(interactive)
-	(menu-bar-mode -1)
-	(tool-bar-mode -1)
-	(toggle-scroll-bar -1)
-	;; (set-frame-font "Fira Code")
-	(set-frame-font "Gitlab Mono")
-	(set-face-attribute 'default nil :height 120))
+  "Set UI settings (fonts, hide bars, ...)."
+  (interactive)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (toggle-scroll-bar -1)
+  ;; (set-frame-font "Fira Code")
+  (set-frame-font "Gitlab Mono")
+  (set-face-attribute 'default nil :height 120))
 
 (defun tz/indent-buffer ()
-	"Indnet buffer."
-	(interactive)
-	(indent-region (point-min) (point-max)))
+  "Indnet buffer."
+  (interactive)
+  (indent-region (point-min) (point-max)))
 
 ;; check shell-command-on-region,
 ;; expand, unexpand
 (defun tz/tabify-buffer ()
-	"Convert buffer spaces to tabs."
-	(interactive)
-	(tabify (point-min) (point-max)))
+  "Convert buffer spaces to tabs."
+  (interactive)
+  (tabify (point-min) (point-max)))
 
 (defun tz/untabify-buffer ()
-	"Convert buffer tabs to spaces."
-	(interactive)
-	(untabify (point-min) (point-max)))
+  "Convert buffer tabs to spaces."
+  (interactive)
+  (untabify (point-min) (point-max)))
 
 (defun align-with-spaces (ogfn &rest args)
-	(let ((indent-tabs-mode nil))
-		(apply ogfn args)))
+  (let ((indent-tabs-mode nil))
+    (apply ogfn args)))
 
 (tz/set-ui)
 
 (add-to-list 'custom-theme-load-path
-						 (concat user-emacs-directory "themes"))
+             (concat user-emacs-directory "themes"))
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 
 ;; General Emacs configs
@@ -137,7 +137,7 @@
 (global-display-line-numbers-mode t)
 
 (setq-default ring-bell-function 'ignore)
-(setq-default indent-tabs-mode t)
+(setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq-default default-tab-width 2)
 (setq-default tab-always-indent nil)
@@ -150,211 +150,209 @@
 (setopt mac-right-command-modifier 'meta)
 
 (setopt custom-file
-				(concat user-emacs-directory
-								"auto-generated-customized-settings.el"))
+        (concat user-emacs-directory
+                "auto-generated-customized-settings.el"))
 (load custom-file 'noerror)
 
 (when (daemonp)
-	(add-hook 'after-make-frame-functions
-						(lambda (frame)
-							(select-frame frame)
-							(tz/set-ui))))
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              (select-frame frame)
+              (tz/set-ui))))
 
 (use-package emacs
-	:hook
-	((before-save     . whitespace-cleanup)
-	 (before-save     . (lambda () (delete-trailing-whitespace)))
-	 (before-save     . tz/indent-buffer)
-	 (prog-mode       . (lambda () (setq show-trailing-whitespace t)))
-	 (crystal-mode    . tz/insert-file-template)
-	 (clojure-mode    . tz/insert-file-template)
-	 (emacs-lisp-mode . tz/insert-file-template)
-	 (lisp-mode       . tz/insert-file-template)))
+  :hook
+  ((before-save     . whitespace-cleanup)
+   (before-save     . (lambda () (delete-trailing-whitespace)))
+   (before-save     . tz/indent-buffer)
+   (prog-mode       . (lambda () (setq show-trailing-whitespace t)))
+   (crystal-mode    . tz/insert-file-template)
+   (clojure-mode    . tz/insert-file-template)
+   (emacs-lisp-mode . tz/insert-file-template)
+   (lisp-mode       . tz/insert-file-template)))
 
 (use-package whitespace
-	:diminish whitespace-mode
-	:hook (prog-mode . whitespace-mode)
-	:config
-	(setopt whitespace-style '(face tab-mark tabs trailing)) ;; change to indentation
-	(custom-set-faces
-	 '(whitespace-tab ((t (:foreground "#DB5B83"))))
-	 '(whitespace-trailing ((t (:background "red")))))
-	)
+  :diminish whitespace-mode
+  :hook (prog-mode . whitespace-mode)
+  :config
+  (setopt whitespace-style '(face tab-mark tabs trailing)) ;; change to indentation
+  (custom-set-faces
+   '(whitespace-tab ((t (:foreground "#DB5B83"))))
+   '(whitespace-trailing ((t (:background "red")))))
+  )
 
 (use-package align
-	:bind
-	("C-x a a" . align-entire)
-	:config
-	(advice-add 'align :around #'align-with-spaces))
+  :bind
+  ("C-x a a" . align-entire)
+  :config
+  (advice-add 'align :around #'align-with-spaces))
 
 (use-package diminish
-	:defer t)
+  :defer t)
 (use-package try
-	:defer t)
+  :defer t)
 (use-package rust-mode
-	:defer t)
+  :defer t)
 (use-package typescript-mode
-	:defer t)
+  :defer t)
 (use-package crystal-mode
-	:defer t)
+  :defer t)
 (use-package zig-mode
-	:defer t)
+  :defer t)
 (use-package fish-mode
-	:defer t)
+  :defer t)
 (use-package yaml-mode
-	:defer t)
+  :defer t)
 (use-package toml-mode
-	:defer t)
+  :defer t)
 (use-package clojure-mode
-	:defer t)
+  :defer t)
 (use-package eldoc
-	:defer t
-	:diminish eldoc-mode)
+  :defer t
+  :diminish eldoc-mode)
 
 ;; Interactive macro expander
 (use-package macrostep
   :bind (:map emacs-lisp-mode-map
-							("C-c e" . macrostep-expand)
-							:map lisp-interaction-mode-map
-							("C-c e" . macrostep-expand)))
+              ("C-c e" . macrostep-expand)
+              :map lisp-interaction-mode-map
+              ("C-c e" . macrostep-expand)))
 
 (defvar treesit-language-source-alist
-	'((odin "https://github.com/tree-sitter-grammars/tree-sitter-odin")))
+  '((odin "https://github.com/tree-sitter-grammars/tree-sitter-odin")))
 
 (use-package odin-ts-mode
   :vc (:url "https://github.com/Sampie159/odin-ts-mode"
-						:branch "master")
+            :branch "master")
   :mode "\\.odin\\'")
 
 (use-package sly
-	:defer t)
+  :defer t)
 (use-package sly-asdf
-	:after sly)
+  :after sly)
 (use-package sly-quicklisp
-	:after sly)
+  :after sly)
 ;; expand macros in file C-c M-e
 ;; NOTE(tz): maybe change it to match elisp?
 (use-package sly-macrostep
-	:after sly)
+  :after sly)
 
 (use-package rainbow-mode
-	:diminish rainbow-mode
-	:hook (prog-mode . rainbow-mode)
-	:config
-	(setopt rainbow-x-colors nil))
+  :diminish rainbow-mode
+  :hook (prog-mode . rainbow-mode)
+  :config
+  (setopt rainbow-x-colors nil))
 
 (use-package rainbow-delimiters
-	:requires rainbow-mode
-	:hook (prog-mode . rainbow-delimiters-mode))
+  :requires rainbow-mode
+  :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package diff-hl
-	:defer t
-	:hook ((prog-mode . diff-hl-mode)
-				 (prog-mode . diff-hl-flydiff-mode)))
+  :defer t
+  :hook ((prog-mode . diff-hl-mode)
+         (prog-mode . diff-hl-flydiff-mode)))
 
 (use-package hl-todo
-	:config
-	(global-hl-todo-mode))
+  :config
+  (global-hl-todo-mode))
 
 ;; hi-lock is used to highlight words in buffer
 ;; its used by highlight-thing package I believe
 (use-package hi-lock
-	:defer t
-	:diminish hi-lock-mode)
+  :defer t
+  :diminish hi-lock-mode)
 
 (use-package highlight-thing
-	:diminish highlight-thing-mode
-	:hook
-	(prog-mode . highlight-thing-mode))
+  :diminish highlight-thing-mode
+  :hook
+  (prog-mode . highlight-thing-mode))
 
 (use-package switch-window
-	:bind
-	("C-x o" . switch-window))
+  :bind
+  ("C-x o" . switch-window))
 
 (use-package ido-vertical-mode
-	:config
-	(setq ido-enable-flex-matching t)
-	(setq ido-everywhere t)
-	(setq ido-vertical-show-count t)
-	(setq ido-use-faces t)
-	(set-face-attribute 'ido-vertical-first-match-face nil :foreground "orange")
-	(set-face-attribute 'ido-vertical-only-match-face nil)
-	(set-face-attribute 'ido-vertical-match-face nil)
-	(ido-mode 1)
-	(ido-vertical-mode 1))
+  :config
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (setq ido-vertical-show-count t)
+  (setq ido-use-faces t)
+  (set-face-attribute 'ido-vertical-first-match-face nil :foreground "orange")
+  (set-face-attribute 'ido-vertical-only-match-face nil)
+  (set-face-attribute 'ido-vertical-match-face nil)
+  (ido-mode 1)
+  (ido-vertical-mode 1))
 
 (use-package smex
-	:bind
-	("M-x"         . smex)
-	("M-X"         . smex-major-mode-commands)
-	;; old M-x
-	("C-c C-c M-x" . execute-extended-command))
+  :bind
+  ("M-x"         . smex)
+  ("M-X"         . smex-major-mode-commands)
+  ;; old M-x
+  ("C-c C-c M-x" . execute-extended-command))
 
 (use-package which-key
-	:diminish which-key-mode
-	:config
-	(which-key-mode)
-	(which-key-setup-side-window-right-bottom))
+  :diminish which-key-mode
+  :config
+  (which-key-mode)
+  (which-key-setup-side-window-right-bottom))
 
 (use-package docker
-	:bind ("C-c d" . docker))
+  :bind ("C-c d" . docker))
 
 (use-package yascroll
-	:config
-	(global-yascroll-bar-mode 1))
+  :config
+  (global-yascroll-bar-mode 1))
 
 (use-package auto-package-update
-	:config
-	(auto-package-update-maybe))
+  :config
+  (auto-package-update-maybe))
 
 (use-package expand-region
-	:bind ("C-=" . er/expand-region))
+  :bind ("C-=" . er/expand-region))
 
 (use-package multiple-cursors
-	:bind
-	("C->" . mc/mark-next-like-this)
-	("C-<" . mc/mark-previous-like-this)
-	("C-c C-<" . mc/mark-all-like-this))
+  :bind
+  ("C->" . mc/mark-next-like-this)
+  ("C-<" . mc/mark-previous-like-this)
+  ("C-c C-<" . mc/mark-all-like-this))
 
 (use-package paredit
-	:hook
-	(emacs-lisp-mode . paredit-mode)
-	(lisp-mode       . paredit-mode)
-	(scheme-mode     . paredit-mode)
-	(clojure-mode    . paredit-mode))
+  :hook
+  (emacs-lisp-mode . paredit-mode)
+  (lisp-mode       . paredit-mode)
+  (scheme-mode     . paredit-mode)
+  (clojure-mode    . paredit-mode))
 
 (use-package aggressive-indent
-	:disabled
-	:hook
-	(emacs-lisp-mode . aggressive-indent-mode)
-	(lisp-mode       . aggressive-indent-mode)
-	(clojure-mode    . aggressive-indent-mode)
-	(scheme-mode     . aggressive-indent-mode)
-	(sly-mode        . aggressive-indent-mode))
+  :hook
+  (emacs-lisp-mode . aggressive-indent-mode)
+  (lisp-mode       . aggressive-indent-mode)
+  (clojure-mode    . aggressive-indent-mode)
+  (scheme-mode     . aggressive-indent-mode))
 
 ;; this package is used to move lines up and down
 ;; and move words right and left
 (use-package drag-stuff
-	:diminish drag-stuff-mode
-	:config
-	(drag-stuff-global-mode 1)
-	(drag-stuff-define-keys))
+  :diminish drag-stuff-mode
+  :config
+  (drag-stuff-global-mode 1)
+  (drag-stuff-define-keys))
 
 (use-package restclient
-	:mode ("\\.restclient\\'" . restclient-mode))
+  :mode ("\\.restclient\\'" . restclient-mode))
 
 (use-package almost-mono-themes
-	:config
-	(load-theme 'almost-mono-cream t)
-	;; NOTE(tz): to be refactored..
-	(set-face-attribute 'mode-line nil :box nil :background "#E6B983" :foreground "#000000")
-	(set-face-attribute 'font-lock-string-face nil :foreground "#6760A8"))
+  :config
+  (load-theme 'almost-mono-cream t)
+  ;; NOTE(tz): to be refactored..
+  (set-face-attribute 'mode-line nil :box nil :background "#E6B983" :foreground "#000000")
+  (set-face-attribute 'font-lock-string-face nil :foreground "#6760A8"))
 
 (use-package ef-themes
-	:disabled
-	:config
-	(load-theme 'ef-summer t)
-	;; (load-theme 'ef-tritanopia-light t)
-	)
+  :disabled
+  :config
+  (load-theme 'ef-summer t)
+  ;; (load-theme 'ef-tritanopia-light t)
+  )
 
 ;;; init.el ends here
