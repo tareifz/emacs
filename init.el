@@ -143,6 +143,8 @@
 (setq-default tab-always-indent nil)
 (setq-default js-indent-level 2)
 
+(setopt display-fill-column-indicator-column 81)
+
 ;; MacOS remapping
 (setopt mac-option-modifier nil)
 (setopt mac-command-modifier 'meta)
@@ -186,6 +188,13 @@
   ("C-x a a" . align-entire)
   :config
   (advice-add 'align :around #'align-with-spaces))
+
+(use-package display-fill-column-indicator
+  :hook (prog-mode . display-fill-column-indicator-mode)
+  :custom
+  ;; "░" => ?\u2591
+  ;; "█" => ?\u2588
+  (display-fill-column-indicator-character ?\u2502))
 
 (use-package diminish
   :defer t)
@@ -345,8 +354,13 @@
   :config
   (load-theme 'almost-mono-cream t)
   ;; NOTE(tz): to be refactored..
-  (set-face-attribute 'mode-line nil :box nil :background "#E6B983" :foreground "#000000")
-  (set-face-attribute 'font-lock-string-face nil :foreground "#6760A8"))
+  (set-face-attribute 'mode-line nil
+                      :box nil
+                      :background "#E6B983"
+                      :foreground "#000000")
+  (set-face-attribute 'font-lock-string-face nil :foreground "#6760A8")
+  ;; face for the horizontal line after 80 chars
+  (set-face-attribute 'fill-column-indicator nil :foreground "tomato"))
 
 (use-package ef-themes
   :disabled
