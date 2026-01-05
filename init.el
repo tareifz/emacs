@@ -42,6 +42,26 @@
 
 (setq use-package-always-ensure t)
 
+
+;; (cream . ((background . "#f0e5da")
+;; 	        (foreground . "#000000")
+;; 	        (weak	  . "#7d7165")
+;; 	        (weaker	  . "#c4baaf")
+;; 	        (weakest    . "#dbd0c5")
+;; 	        (highlight  . "#fda50f")
+;; 	        (warning	  . "#ff0000")
+;; 	        (success	  . "#00ff00")
+;; 	        (string     . "#3c5e2b")))
+(defcustom tz/--color-scheme '((background . "#f0e5da")
+                               (foreground . "#000000")
+                               (highlight . "#fda50f")
+                               (fill-column . "#F2695C")
+                               (gitter-added . "#00ff00")
+                               (gitter-modified . "#fda50f")
+                               (gitter-deleted . "#ff0000")
+                               (cursor . "#B8817D"))
+  "Alist for custom colors overrides.")
+
 (defun tz/load-only-theme ()
   "Disable all themes and then load a single theme interactively."
   (interactive)
@@ -75,6 +95,8 @@
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (toggle-scroll-bar -1)
+  (blink-cursor-mode -1)
+  (set-frame-parameter nil 'cursor-color "#F69")
   ;; (set-frame-font "Fira Code")
   (set-frame-font "Gitlab Mono")
   (set-face-attribute 'default nil :height 120))
@@ -360,7 +382,8 @@
                       :foreground "#000000")
   (set-face-attribute 'font-lock-string-face nil :foreground "#6760A8")
   ;; face for the horizontal line after 80 chars
-  (set-face-attribute 'fill-column-indicator nil :foreground "tomato"))
+  (set-face-attribute 'fill-column-indicator nil :foreground "tomato")
+  (set-face-attribute 'show-paren-match nil :background "grey" :foreground nil))
 
 (use-package ef-themes
   :disabled
